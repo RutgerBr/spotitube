@@ -24,7 +24,7 @@ public class LoginController
 
         var token = TOKEN;
         var user = "Rutger Broekkamp";
-
+//asdf
         response.setToken(token);
         response.setUser(user);
 

@@ -2,5 +2,5 @@ language: java
 jdk:
  - openjdk11
 
-after_success: :
- mvn jacoco:report coveralls:report
+after_success:
+ mvn org.jacoco:jacoco-maven-plugin:prepare-agent jacoco:report coveralls:report
