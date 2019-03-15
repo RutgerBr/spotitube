@@ -1,9 +1,10 @@
 package school.oose.dea.controllers;
 
-import school.oose.dea.Playlist;
-import school.oose.dea.Track;
-import school.oose.dea.dto.PlaylistResponse;
-import school.oose.dea.dto.TrackResponse;
+import school.oose.dea.datasources.PlaylistDAO;
+import school.oose.dea.datasources.TrackDAO;
+import school.oose.dea.database.DatabaseConnection;
+import school.oose.dea.controllers.dto.PlaylistResponse;
+import school.oose.dea.controllers.dto.TrackResponse;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
@@ -11,19 +12,22 @@ import javax.ws.rs.core.Response;
 @Path("/playlists")
 public class PlaylistController
 {
+    DatabaseConnection databaseConnection = new DatabaseConnection();
+
     @GET
     @Consumes("application/json")
     @Produces("application/json")
     public Response getAllPlaylists(@QueryParam("token") String token)
     {
+        databaseConnection.connectToDatabase();
         if (!LoginController.TOKEN.equals(token))
         {
             return Response.status(403).build();
         }
 
         var response = new PlaylistResponse();
-        var playlist = new Playlist();
-        var playlist2 = new Playlist();
+        var playlist = new PlaylistDAO();
+        var playlist2 = new PlaylistDAO();
 
         playlist.setTracks(new String[0]);
         playlist.setName("Death metal");
@@ -54,7 +58,7 @@ public class PlaylistController
             return Response.status(403).build();
         }
         var response = new TrackResponse();
-        var track = new Track();
+        var track = new TrackDAO();
 
         switch(playlistId)
         {

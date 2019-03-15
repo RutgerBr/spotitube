@@ -1,6 +1,6 @@
-package school.oose.dea;
+package school.oose.dea.datasources;
 
-public class Track
+public class TrackDAO
 {
     private int id;
     private String title;

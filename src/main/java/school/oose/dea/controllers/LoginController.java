@@ -1,7 +1,7 @@
 package school.oose.dea.controllers;
 
-import school.oose.dea.dto.LoginRequest;
-import school.oose.dea.dto.LoginResponse;
+import school.oose.dea.controllers.dto.LoginRequest;
+import school.oose.dea.controllers.dto.LoginResponse;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;

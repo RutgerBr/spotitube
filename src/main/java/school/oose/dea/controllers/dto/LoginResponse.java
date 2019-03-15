@@ -1,4 +1,4 @@
-package school.oose.dea.dto;
+package school.oose.dea.controllers.dto;
 
 public class LoginResponse
 {

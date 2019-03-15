@@ -1,6 +1,6 @@
-package school.oose.dea.dto;
+package school.oose.dea.controllers.dto;
 
-import school.oose.dea.Playlist;
+import school.oose.dea.datasources.PlaylistDAO;
 
 import java.util.ArrayList;
 
@@ -8,7 +8,7 @@ public class PlaylistResponse
 {
 
     private int length;
-    private ArrayList<Playlist> playlists = new ArrayList<>();
+    private ArrayList<PlaylistDAO> playlists = new ArrayList<>();
 
     public int getLength()
     {
@@ -20,12 +20,12 @@ public class PlaylistResponse
         this.length = length;
     }
 
-    public ArrayList<Playlist> getPlaylists()
+    public ArrayList<PlaylistDAO> getPlaylists()
     {
         return playlists;
     }
 
-    public void addPlaylist(Playlist playlists)
+    public void addPlaylist(PlaylistDAO playlists)
     {
         this.playlists.add(playlists);
     }
