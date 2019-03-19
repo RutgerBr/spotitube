@@ -6,6 +6,7 @@ import java.sql.SQLException;
 
 public class DatabaseConnection
 {
+    private Connection connection;
     public void connectToDatabase()
     {
         try
@@ -16,13 +17,22 @@ public class DatabaseConnection
             System.out.println("NogIetsWatKapotKanGaan");
         }
 
-        Connection cnEmps = null;
         try
         {
-            cnEmps = DriverManager.getConnection("jdbc:sqlserver://localhost:1433;databaseName=SPOTITUBE", "sa", "groep33");
+            connection = DriverManager.getConnection("jdbc:sqlserver://localhost:1433;databaseName=SPOTITUBE", "sa", "groep33");
         } catch (SQLException e)
         {
             System.out.println("Error connecting to a database: " + e);
         }
+    }
+
+    public Connection getConnection()
+    {
+        return connection;
+    }
+
+    public void setConnection(Connection connection)
+    {
+        this.connection = connection;
     }
 }

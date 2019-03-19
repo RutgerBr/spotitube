@@ -1,20 +1,20 @@
 package school.oose.dea.controllers.dto;
 
-import school.oose.dea.datasources.TrackDAO;
+import school.oose.dea.Track;
 
 import java.util.ArrayList;
 
 public class TrackResponse
 {
 
-    private ArrayList<TrackDAO> tracks = new ArrayList<>();
+    private ArrayList<Track> tracks = new ArrayList<>();
 
-    public ArrayList<TrackDAO> getTracks()
+    public ArrayList<Track> getTracks()
     {
         return tracks;
     }
 
-    public void addTracks(TrackDAO tracks)
+    public void addTracks(Track tracks)
     {
         this.tracks.add(tracks);
     }

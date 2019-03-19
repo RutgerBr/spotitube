@@ -1,7 +1,7 @@
 package school.oose.dea.controllers;
 
-import school.oose.dea.datasources.PlaylistDAO;
-import school.oose.dea.datasources.TrackDAO;
+import school.oose.dea.Playlist;
+import school.oose.dea.Track;
 import school.oose.dea.database.DatabaseConnection;
 import school.oose.dea.controllers.dto.PlaylistResponse;
 import school.oose.dea.controllers.dto.TrackResponse;
@@ -26,8 +26,8 @@ public class PlaylistController
         }
 
         var response = new PlaylistResponse();
-        var playlist = new PlaylistDAO();
-        var playlist2 = new PlaylistDAO();
+        var playlist = new Playlist();
+        var playlist2 = new Playlist();
 
         playlist.setTracks(new String[0]);
         playlist.setName("Death metal");
@@ -58,7 +58,7 @@ public class PlaylistController
             return Response.status(403).build();
         }
         var response = new TrackResponse();
-        var track = new TrackDAO();
+        var track = new Track();
 
         switch(playlistId)
         {

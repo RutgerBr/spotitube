@@ -1,6 +1,6 @@
-package school.oose.dea.datasources;
+package school.oose.dea;
 
-public class PlaylistDAO
+public class Playlist
 {
     private int id;
     private String name;
