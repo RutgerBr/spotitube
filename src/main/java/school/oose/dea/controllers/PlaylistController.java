@@ -99,6 +99,17 @@ public class PlaylistController
 
         return getAllPlaylists(token);
     }
+
+    @POST
+    @Consumes("application/json")
+    @Produces("application/json")
+    public Response addPlaylist(PlaylistDTO playlist, @QueryParam("token") String token)
+    {
+        playlistDAO.addPlaylist(token, playlist);
+
+        return getAllPlaylists(token);
+    }
+
     private int calculateLengthOfPlaylist(int playlistid)
     {
         // to-do calc length (sum of duration from all tracks in playlist)

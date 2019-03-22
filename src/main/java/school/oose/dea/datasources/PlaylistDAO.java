@@ -50,7 +50,6 @@ public class PlaylistDAO
 
     public void modifyPlaylist(int id, PlaylistDTO playlistDTO)
     {
-
         try
         {
             PreparedStatement prep = connection.getConnection().prepareStatement("UPDATE PLAYLIST SET name = ? WHERE PLAYLISTID = ?");
@@ -64,4 +63,52 @@ public class PlaylistDAO
             System.out.println("Query execution failed: " + e);
         }
     }
+
+    public void addPlaylist(String token, PlaylistDTO playlistDTO)
+    {
+        try
+        {
+            PreparedStatement prep = connection.getConnection().prepareStatement("INSERT PLAYLIST VALUES ((SELECT MAX(PLAYLISTID) + 1 AS PLAYLISTID FROM PLAYLIST), (SELECT USERNAME FROM [USER] WHERE TOKEN =  ?), ?, ?)");
+            prep.setString(1, token);
+            prep.setString(2, playlistDTO.getName());
+            prep.setInt(3, 1);
+
+            prep.execute();
+
+        } catch (SQLException e)
+        {
+            System.out.println("Query execution failed: " + e);
+        }
+    }
+
+//    public void deletePlaylist(int id, PlaylistDTO playlistDTO)
+//    {
+//        try
+//        {
+//            PreparedStatement prep = connection.getConnection().prepareStatement("UPDATE PLAYLIST SET name = ? WHERE PLAYLISTID = ?");
+//            prep.setString(1, playlistDTO.getName());
+//            prep.setInt(2, id);
+//
+//            prep.execute();
+//
+//        } catch (SQLException e)
+//        {
+//            System.out.println("Query execution failed: " + e);
+//        }
+//    }
+//    public int getHighestPlaylistId()
+//    {
+//        int result = 0;
+//        try
+//        {
+//            PreparedStatement prep = connection.getConnection().prepareStatement("SELECT MAX(PLAYLISTID) AS PLAYLISTID FROM PLAYLIST ");
+//            ResultSet resultSet = prep.executeQuery();
+//            result = resultSet.getInt("PLAYLISTID");
+//
+//        } catch (SQLException e)
+//        {
+//            System.out.println("Query execution failed: " + e);
+//        }
+//        return result;
+//    }
 }
