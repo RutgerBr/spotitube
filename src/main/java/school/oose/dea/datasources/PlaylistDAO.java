@@ -52,7 +52,7 @@ public class PlaylistDAO
     {
         try
         {
-            PreparedStatement prep = connection.getConnection().prepareStatement("UPDATE PLAYLIST SET name = ? WHERE PLAYLISTID = ?");
+            PreparedStatement prep = connection.getConnection().prepareStatement("UPDATE PLAYLIST SET NAME = ? WHERE PLAYLISTID = ?");
             prep.setString(1, playlistDTO.getName());
             prep.setInt(2, id);
 
@@ -81,21 +81,21 @@ public class PlaylistDAO
         }
     }
 
-//    public void deletePlaylist(int id, PlaylistDTO playlistDTO)
-//    {
-//        try
-//        {
-//            PreparedStatement prep = connection.getConnection().prepareStatement("UPDATE PLAYLIST SET name = ? WHERE PLAYLISTID = ?");
-//            prep.setString(1, playlistDTO.getName());
-//            prep.setInt(2, id);
-//
-//            prep.execute();
-//
-//        } catch (SQLException e)
-//        {
-//            System.out.println("Query execution failed: " + e);
-//        }
-//    }
+    public void deletePlaylist(int id)
+    {
+        try
+        {
+            PreparedStatement prep = connection.getConnection().prepareStatement("DELETE FROM PLAYLIST WHERE PLAYLISTID = ?");
+            prep.setInt(1, id);
+
+            prep.execute();
+
+        } catch (SQLException e)
+        {
+            System.out.println("Query execution failed: " + e);
+        }
+    }
+
 //    public int getHighestPlaylistId()
 //    {
 //        int result = 0;

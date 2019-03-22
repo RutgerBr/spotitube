@@ -110,6 +110,17 @@ public class PlaylistController
         return getAllPlaylists(token);
     }
 
+    @DELETE
+    @Path("/{playlistId}/")
+    @Consumes("application/json")
+    @Produces("application/json")
+    public Response deletePlaylist(@PathParam("playlistId") int playlistId, @QueryParam("token") String token)
+    {
+        playlistDAO.deletePlaylist(playlistId);
+
+        return getAllPlaylists(token);
+    }
+
     private int calculateLengthOfPlaylist(int playlistid)
     {
         // to-do calc length (sum of duration from all tracks in playlist)
