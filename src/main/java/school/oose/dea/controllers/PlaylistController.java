@@ -1,49 +1,54 @@
 package school.oose.dea.controllers;
 
-import school.oose.dea.Playlist;
-import school.oose.dea.Track;
-import school.oose.dea.database.DatabaseConnection;
+import school.oose.dea.controllers.dto.PlaylistDTO;
+import school.oose.dea.controllers.dto.TrackDTO;
 import school.oose.dea.controllers.dto.PlaylistResponse;
 import school.oose.dea.controllers.dto.TrackResponse;
+import school.oose.dea.datasources.PlaylistDAO;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
+import java.sql.SQLException;
 
 @Path("/playlists")
 public class PlaylistController
 {
-    DatabaseConnection databaseConnection = new DatabaseConnection();
+    private PlaylistDAO playlistDAO = new PlaylistDAO();
+    private PlaylistResponse response = new PlaylistResponse();
 
     @GET
     @Consumes("application/json")
     @Produces("application/json")
     public Response getAllPlaylists(@QueryParam("token") String token)
     {
-        databaseConnection.connectToDatabase();
         if (!LoginController.TOKEN.equals(token))
         {
             return Response.status(403).build();
         }
 
-        var response = new PlaylistResponse();
-        var playlist = new Playlist();
-        var playlist2 = new Playlist();
+        var resultSet = playlistDAO.getAllPlaylistInfo(token);
+        var length = 0;
+        var playlistId = 0;
 
-        playlist.setTracks(new String[0]);
-        playlist.setName("Death metal");
-        playlist.setOwner(true);
-        playlist.setId(1);
+        try
+        {
+            while (resultSet.next())
+            {
+                var playlist = new PlaylistDTO();
+                playlistId = resultSet.getInt("PLAYLISTID");
+                playlist.setId(playlistId);
+                playlist.setName(resultSet.getString("NAME"));
+                playlist.setOwner(resultSet.getBoolean("OWNER"));
+                playlist.setTracks(new String[0]);
 
-        response.addPlaylist(playlist);
-
-        playlist2.setTracks(new String[0]);
-        playlist2.setName("pop");
-        playlist2.setOwner(false);
-        playlist2.setId(2);
-
-        response.addPlaylist(playlist2);
-        response.setLength(123445);
-
+                length += calculateLengthOfPlaylist(playlistId);
+                response.addPlaylist(playlist);
+            }
+        } catch (SQLException e)
+        {
+            System.out.println("Error during reading resultSet: " + e);
+        }
+        response.setLength(length);
         return Response.ok().entity(response).build();
     }
 
@@ -51,39 +56,52 @@ public class PlaylistController
     @Path("/{playlistId}/tracks")
     @Consumes("application/json")
     @Produces("application/json")
-    public Response viewPlaylist(@PathParam("playlistId") int playlistId, @QueryParam("token") String token)
+    public Response viewTracksInPlaylist(@PathParam("playlistId") int playlistId, @QueryParam("token") String token)
     {
         if (!LoginController.TOKEN.equals(token))
         {
             return Response.status(403).build();
         }
         var response = new TrackResponse();
-        var track = new Track();
+        var track = new TrackDTO();
+        var resultSet = playlistDAO.getTracksOfPlaylist(playlistId);
 
-        switch(playlistId)
+        try
         {
-            case 1:
-                track.setId(1);
-                track.setTitle("Song for someone");
-                track.setPerformer("The Frames");
-                track.setDuration(350);
-                track.setAlbum("The cost");
-                track.setOfflineAvailable(false);
-
+            while (resultSet.next())
+            {
+                track = new TrackDTO();
+                track.setId(resultSet.getInt("TRACKID"));
+                track.setTitle(resultSet.getString("TITLE"));
+                track.setDuration(resultSet.getInt("DURATION"));
+                track.setPerformer(resultSet.getString("PERFORMER"));
+                track.setAlbum(resultSet.getString("ALBUM"));
+                track.setPlaycount(resultSet.getInt("PLAYCOUNT"));
+                track.setPublicationDate(resultSet.getString("PUBLICATIONDATE"));
+                track.setDescription(resultSet.getString("DESCRIPTION"));
+                track.setOfflineAvailable(resultSet.getBoolean("OFFLINEAVAILABLE"));
                 response.addTracks(track);
-
-                track.setId(2);
-                track.setTitle("The cost");
-                track.setPerformer("The Frames");
-                track.setDuration(423);
-                track.setPlaycount(37);
-                track.setPublicationDate("10-01-2005");
-                track.setDescription("Title song from the Album The Cost");
-                track.setOfflineAvailable(true);
-
-                response.addTracks(track);
-                break;
+            }
+        } catch (SQLException e)
+        {
+            System.out.println("Error during reading resultSet: " + e);
         }
         return Response.ok().entity(response).build();
+    }
+
+    @PUT
+    @Path("/{playlistId}/")
+    @Consumes("application/json")
+    @Produces("application/json")
+    public Response editPlaylist(PlaylistDTO playlist, @PathParam("playlistId") int playlistId, @QueryParam("token") String token)
+    {
+        playlistDAO.modifyPlaylist(playlistId, playlist);
+
+        return getAllPlaylists(token);
+    }
+    private int calculateLengthOfPlaylist(int playlistid)
+    {
+        // to-do calc length (sum of duration from all tracks in playlist)
+        return 0;
     }
 }

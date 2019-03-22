@@ -1,7 +1,5 @@
 package school.oose.dea.datasources;
 
-import school.oose.dea.database.DatabaseConnection;
-
 import java.sql.*;
 
 public class LoginDAO
@@ -15,15 +13,16 @@ public class LoginDAO
         connection.connectToDatabase();
     }
 
-    public ResultSet getLoginInfo(String user)
+    public ResultSet getLoginInfo(String user, String password)
     {
         ResultSet result = null;
 
         try
         {
-            PreparedStatement prep = connection.getConnection().prepareStatement("SELECT * FROM [USER] WHERE USERNAME = ?");
+            PreparedStatement prep = connection.getConnection().prepareStatement("SELECT * FROM [USER] WHERE USERNAME = ? AND PASSWORD = ?");
 
             prep.setString(1, user);
+            prep.setString(2, password);
             result = prep.executeQuery();
         } catch (SQLException e)
         {
@@ -31,6 +30,4 @@ public class LoginDAO
         }
         return result;
     }
-
-
 }

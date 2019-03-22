@@ -17,28 +17,30 @@ public class LoginController
 
     public static final String TOKEN = "1234-1234-1234";
 
+    private LoginDAO loginDAO = new LoginDAO();
+
     @POST
     @Consumes("application/json")
     @Produces("application/json")
     public Response login(LoginRequest request)
     {
-        var loginDAO = new LoginDAO();
-        var resultSet = loginDAO.getLoginInfo(request.getUser());
+        var resultSet = loginDAO.getLoginInfo(request.getUser(), request.getPassword());
         var response = new LoginResponse();
 
         try
         {
-            while (resultSet.next())
+            if (resultSet.next())
             {
-                if (request.getPassword().equals(resultSet.getString("PASSWORD")))
-                {
-                    response.setUser(resultSet.getString("USERNAME"));
-                    response.setToken(resultSet.getString("TOKEN"));
-                }
+                response.setUser(resultSet.getString("USERNAME"));
+                response.setToken(resultSet.getString("TOKEN"));
+            }
+            else
+            {
+                return Response.status(401).build();
             }
         } catch (SQLException e)
         {
-            System.out.println("Error during resultSet read: " + e);
+            System.out.println("Error reading resultset");
         }
 
         return Response.ok().entity(response).build();
