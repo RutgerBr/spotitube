@@ -1,12 +1,14 @@
 package school.oose.dea.controllers.dto;
 
+import school.oose.dea.models.PlaylistModel;
+
 import java.util.ArrayList;
 
 public class PlaylistResponse
 {
 
     private int length;
-    private ArrayList<PlaylistDTO> playlistDTOS = new ArrayList<>();
+    private ArrayList<PlaylistModel> playlists = new ArrayList<>();
 
     public int getLength()
     {
@@ -18,13 +20,13 @@ public class PlaylistResponse
         this.length = length;
     }
 
-    public ArrayList<PlaylistDTO> getPlaylists()
+    public ArrayList<PlaylistModel> getPlaylists()
     {
-        return playlistDTOS;
+        return playlists;
     }
 
-    public void addPlaylist(PlaylistDTO playlists)
+    public void addPlaylist(PlaylistModel playlists)
     {
-        this.playlistDTOS.add(playlists);
+        this.playlists.add(playlists);
     }
 }

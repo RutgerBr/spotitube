@@ -2,8 +2,9 @@ package school.oose.dea.controllers;
 
 import school.oose.dea.controllers.dto.LoginRequest;
 import school.oose.dea.controllers.dto.LoginResponse;
-import school.oose.dea.datasources.LoginDAO;
+import school.oose.dea.datasources.dao.LoginDAO;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -17,6 +18,7 @@ public class LoginController
 
     public static final String TOKEN = "1234-1234-1234";
 
+    @Inject
     private LoginDAO loginDAO = new LoginDAO();
 
     @POST

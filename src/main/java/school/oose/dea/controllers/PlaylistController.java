@@ -1,11 +1,9 @@
 package school.oose.dea.controllers;
 
-import school.oose.dea.controllers.dto.PlaylistDTO;
-import school.oose.dea.controllers.dto.TrackDTO;
-import school.oose.dea.controllers.dto.PlaylistResponse;
-import school.oose.dea.controllers.dto.TrackResponse;
-import school.oose.dea.datasources.PlaylistDAO;
+import school.oose.dea.models.PlaylistModel;
+import school.oose.dea.services.PlaylistService;
 
+import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.sql.SQLException;
@@ -13,8 +11,9 @@ import java.sql.SQLException;
 @Path("/playlists")
 public class PlaylistController
 {
-    private PlaylistDAO playlistDAO = new PlaylistDAO();
-    private PlaylistResponse response = new PlaylistResponse();
+
+    @Inject
+    private PlaylistService playlistService;
 
     @GET
     @Consumes("application/json")
@@ -25,31 +24,7 @@ public class PlaylistController
         {
             return Response.status(403).build();
         }
-
-        var resultSet = playlistDAO.getAllPlaylistInfo(token);
-        var length = 0;
-        var playlistId = 0;
-
-        try
-        {
-            while (resultSet.next())
-            {
-                var playlist = new PlaylistDTO();
-                playlistId = resultSet.getInt("PLAYLISTID");
-                playlist.setId(playlistId);
-                playlist.setName(resultSet.getString("NAME"));
-                playlist.setOwner(resultSet.getBoolean("OWNER"));
-                playlist.setTracks(new String[0]);
-
-                length += calculateLengthOfPlaylist(playlistId);
-                response.addPlaylist(playlist);
-            }
-        } catch (SQLException e)
-        {
-            System.out.println("Error during reading resultSet: " + e);
-        }
-        response.setLength(length);
-        return Response.ok().entity(response).build();
+        return Response.ok().entity(playlistService.getAllPlaylists(token)).build();
     }
 
     @GET
@@ -62,40 +37,17 @@ public class PlaylistController
         {
             return Response.status(403).build();
         }
-        var response = new TrackResponse();
-        var track = new TrackDTO();
-        var resultSet = playlistDAO.getTracksOfPlaylist(playlistId);
 
-        try
-        {
-            while (resultSet.next())
-            {
-                track = new TrackDTO();
-                track.setId(resultSet.getInt("TRACKID"));
-                track.setTitle(resultSet.getString("TITLE"));
-                track.setDuration(resultSet.getInt("DURATION"));
-                track.setPerformer(resultSet.getString("PERFORMER"));
-                track.setAlbum(resultSet.getString("ALBUM"));
-                track.setPlaycount(resultSet.getInt("PLAYCOUNT"));
-                track.setPublicationDate(resultSet.getString("PUBLICATIONDATE"));
-                track.setDescription(resultSet.getString("DESCRIPTION"));
-                track.setOfflineAvailable(resultSet.getBoolean("OFFLINEAVAILABLE"));
-                response.addTracks(track);
-            }
-        } catch (SQLException e)
-        {
-            System.out.println("Error during reading resultSet: " + e);
-        }
-        return Response.ok().entity(response).build();
+        return Response.ok().entity(playlistService.viewTracksInPlaylist(playlistId, token)).build();
     }
 
     @PUT
     @Path("/{playlistId}/")
     @Consumes("application/json")
     @Produces("application/json")
-    public Response editPlaylist(PlaylistDTO playlist, @PathParam("playlistId") int playlistId, @QueryParam("token") String token)
+    public Response editPlaylist(PlaylistModel playlist, @PathParam("playlistId") int playlistId, @QueryParam("token") String token)
     {
-        playlistDAO.modifyPlaylist(playlistId, playlist);
+        playlistService.modifyPlaylist(playlistId, playlist);
 
         return getAllPlaylists(token);
     }
@@ -103,9 +55,9 @@ public class PlaylistController
     @POST
     @Consumes("application/json")
     @Produces("application/json")
-    public Response addPlaylist(PlaylistDTO playlist, @QueryParam("token") String token)
+    public Response addPlaylist(PlaylistModel playlist, @QueryParam("token") String token)
     {
-        playlistDAO.addPlaylist(token, playlist);
+        playlistService.addPlaylist(token, playlist);
 
         return getAllPlaylists(token);
     }
@@ -116,14 +68,10 @@ public class PlaylistController
     @Produces("application/json")
     public Response deletePlaylist(@PathParam("playlistId") int playlistId, @QueryParam("token") String token)
     {
-        playlistDAO.deletePlaylist(playlistId);
+        playlistService.deletePlaylist(playlistId);
 
         return getAllPlaylists(token);
     }
 
-    private int calculateLengthOfPlaylist(int playlistid)
-    {
-        // to-do calc length (sum of duration from all tracks in playlist)
-        return 0;
-    }
+
 }

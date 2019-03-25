@@ -1,6 +1,6 @@
-package school.oose.dea.controllers.dto;
+package school.oose.dea.models;
 
-public class TrackDTO
+public class TrackModel
 {
     private int id;
     private String title;

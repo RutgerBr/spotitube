@@ -1,11 +1,14 @@
-package school.oose.dea.datasources;
+package school.oose.dea.datasources.dao;
 
-import school.oose.dea.controllers.dto.PlaylistDTO;
+import school.oose.dea.datasources.DatabaseConnection;
+import school.oose.dea.models.PlaylistModel;
 
+import javax.inject.Inject;
 import java.sql.*;
 
 public class PlaylistDAO
 {
+    @Inject
     private DatabaseConnection connection;
 
     public PlaylistDAO()
@@ -31,24 +34,7 @@ public class PlaylistDAO
         return result;
     }
 
-    public ResultSet getTracksOfPlaylist(int playlistId)
-    {
-        ResultSet result = null;
-
-        try
-        {
-            PreparedStatement prep = connection.getConnection().prepareStatement("SELECT * FROM TRACK WHERE trackID IN (SELECT TRACKID FROM TRACK_IN_PLAYLIST WHERE PLAYLISTID = ?)");
-
-            prep.setInt(1, playlistId);
-            result = prep.executeQuery();
-        } catch (SQLException e)
-        {
-            System.out.println("Query execution failed: " + e);
-        }
-        return result;
-    }
-
-    public void modifyPlaylist(int id, PlaylistDTO playlistDTO)
+    public void modifyPlaylist(int id, PlaylistModel playlistDTO)
     {
         try
         {
@@ -64,7 +50,7 @@ public class PlaylistDAO
         }
     }
 
-    public void addPlaylist(String token, PlaylistDTO playlistDTO)
+    public void addPlaylist(String token, PlaylistModel playlistDTO)
     {
         try
         {
@@ -95,20 +81,4 @@ public class PlaylistDAO
             System.out.println("Query execution failed: " + e);
         }
     }
-
-//    public int getHighestPlaylistId()
-//    {
-//        int result = 0;
-//        try
-//        {
-//            PreparedStatement prep = connection.getConnection().prepareStatement("SELECT MAX(PLAYLISTID) AS PLAYLISTID FROM PLAYLIST ");
-//            ResultSet resultSet = prep.executeQuery();
-//            result = resultSet.getInt("PLAYLISTID");
-//
-//        } catch (SQLException e)
-//        {
-//            System.out.println("Query execution failed: " + e);
-//        }
-//        return result;
-//    }
 }

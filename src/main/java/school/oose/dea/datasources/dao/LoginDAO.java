@@ -1,9 +1,13 @@
-package school.oose.dea.datasources;
+package school.oose.dea.datasources.dao;
 
+import school.oose.dea.datasources.DatabaseConnection;
+
+import javax.inject.Inject;
 import java.sql.*;
 
 public class LoginDAO
 {
+    @Inject
     private DatabaseConnection connection;
 
 

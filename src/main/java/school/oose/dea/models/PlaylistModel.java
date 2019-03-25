@@ -1,6 +1,6 @@
-package school.oose.dea.controllers.dto;
+package school.oose.dea.models;
 
-public class PlaylistDTO
+public class PlaylistModel
 {
     private int id;
     private String name;
