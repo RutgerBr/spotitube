@@ -1,10 +1,10 @@
-package school.oose.dea.controllers.dto;
+package school.oose.dea.models;
 
 import school.oose.dea.models.PlaylistModel;
 
 import java.util.ArrayList;
 
-public class PlaylistResponse
+public class PlaylistsModel
 {
 
     private int length;

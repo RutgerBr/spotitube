@@ -4,13 +4,13 @@ import school.oose.dea.datasources.DatabaseConnection;
 
 import javax.inject.Inject;
 import java.sql.*;
+import java.util.UUID;
 
 public class LoginDAO
 {
-    @Inject
     private DatabaseConnection connection;
 
-
+    @Inject
     public LoginDAO()
     {
         connection = new DatabaseConnection();
@@ -34,4 +34,105 @@ public class LoginDAO
         }
         return result;
     }
+
+    public ResultSet getUserByToken(String token)
+    {
+        ResultSet result = null;
+
+        try
+        {
+            PreparedStatement prep = connection.getConnection().prepareStatement("SELECT USERNAME FROM [USER] WHERE TOKEN = ?");
+
+            prep.setString(1, token);
+            result = prep.executeQuery();
+        } catch (SQLException e)
+        {
+            System.out.println("Query execution failed: " + e);
+        }
+
+        return result;
+    }
+
+    public void updateTokenForUser(String username)
+    {
+        try
+        {
+            PreparedStatement prep = connection.getConnection().prepareStatement("UPDATE [USER] SET TOKEN = ? WHERE USERNAME = ?");
+
+            String token = UUID.randomUUID().toString();
+
+            while (doesTokenExist(token))
+            {
+                token = UUID.randomUUID().toString();
+            }
+
+            prep.setString(1, token);
+            prep.setString(2, username);
+            prep.execute();
+
+        } catch (SQLException e)
+        {
+            System.out.println("Query execution failed: " + e);
+        }
+    }
+
+    private boolean doesTokenExist(String token)
+    {
+        ResultSet result = null;
+        boolean isValid = false;
+        try
+        {
+            PreparedStatement prep = connection.getConnection().prepareStatement("SELECT * FROM [USER] WHERE TOKEN = ?");
+
+            prep.setString(1, token);
+            result = prep.executeQuery();
+
+        } catch (SQLException e)
+        {
+            System.out.println("Query execution failed: " + e);
+        }
+
+        try
+        {
+            isValid = result.next();
+        } catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        return isValid;
+    }
+
+//    public boolean verifyToken(String username, String token)
+//    {
+//        ResultSet result = null;
+//        boolean isValid = false;
+//        try
+//        {
+//            PreparedStatement prep = connection.getConnection().prepareStatement("SELECT * FROM [USER] WHERE USERNAME = ? AND TOKEN = ?");
+//
+//            prep.setString(1, username);
+//            prep.setString(2, token);
+//            result = prep.executeQuery();
+//
+//        } catch (SQLException e)
+//        {
+//            System.out.println("Query execution failed: " + e);
+//        }
+//
+//        try
+//        {
+//            if(result.next())
+//            {
+//                isValid = true;
+//            }
+//            else
+//            {
+//                isValid = false;
+//            }
+//        } catch (SQLException e)
+//        {
+//            e.printStackTrace();
+//        }
+//        return isValid;
+//    }
 }

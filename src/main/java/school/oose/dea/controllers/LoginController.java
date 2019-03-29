@@ -1,8 +1,8 @@
 package school.oose.dea.controllers;
 
 import school.oose.dea.controllers.dto.LoginRequest;
-import school.oose.dea.controllers.dto.LoginResponse;
-import school.oose.dea.datasources.dao.LoginDAO;
+import school.oose.dea.models.LoginModel;
+import school.oose.dea.services.LoginService;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -10,41 +10,32 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
-import java.sql.SQLException;
 
 @Path("/login")
 public class LoginController
 {
-
-    public static final String TOKEN = "1234-1234-1234";
-
-    @Inject
-    private LoginDAO loginDAO = new LoginDAO();
+    private LoginService loginService;
 
     @POST
     @Consumes("application/json")
     @Produces("application/json")
     public Response login(LoginRequest request)
     {
-        var resultSet = loginDAO.getLoginInfo(request.getUser(), request.getPassword());
-        var response = new LoginResponse();
+        LoginModel model = loginService.verifyLogin(request);
 
-        try
+        if (null != model)
         {
-            if (resultSet.next())
-            {
-                response.setUser(resultSet.getString("USERNAME"));
-                response.setToken(resultSet.getString("TOKEN"));
-            }
-            else
-            {
-                return Response.status(401).build();
-            }
-        } catch (SQLException e)
-        {
-            System.out.println("Error reading resultset");
+            return Response.ok().entity(model).build();
         }
+        else
+        {
+            return Response.status(403).build();
+        }
+    }
 
-        return Response.ok().entity(response).build();
+    @Inject
+    public void setLoginService(LoginService loginService)
+    {
+        this.loginService = loginService;
     }
 }

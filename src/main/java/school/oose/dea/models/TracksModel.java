@@ -1,10 +1,10 @@
-package school.oose.dea.controllers.dto;
+package school.oose.dea.models;
 
 import school.oose.dea.models.TrackModel;
 
 import java.util.ArrayList;
 
-public class TrackResponse
+public class TracksModel
 {
     private ArrayList<TrackModel> tracks = new ArrayList<>();
 

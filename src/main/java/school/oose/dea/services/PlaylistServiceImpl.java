@@ -1,7 +1,7 @@
 package school.oose.dea.services;
 
-import school.oose.dea.controllers.dto.PlaylistResponse;
-import school.oose.dea.controllers.dto.TrackResponse;
+import school.oose.dea.models.PlaylistsModel;
+import school.oose.dea.datasources.dao.LoginDAO;
 import school.oose.dea.datasources.dao.PlaylistDAO;
 import school.oose.dea.datasources.dao.TrackDAO;
 import school.oose.dea.models.PlaylistModel;
@@ -12,6 +12,10 @@ import java.sql.SQLException;
 
 public class PlaylistServiceImpl implements PlaylistService
 {
+
+    @Inject
+    private LoginDAO loginDAO = new LoginDAO();
+
     @Inject
     private PlaylistDAO playlistDAO = new PlaylistDAO();
 
@@ -19,62 +23,35 @@ public class PlaylistServiceImpl implements PlaylistService
     private TrackDAO trackDAO = new TrackDAO();
 
     @Override
-    public PlaylistResponse getAllPlaylists(String token)
+    public PlaylistsModel getAllPlaylists(String token)
     {
-        var resultSet = playlistDAO.getAllPlaylistInfo(token);
-        var response = new PlaylistResponse();
+        var playlistResultSet = playlistDAO.getAllPlaylistInfo(token);
+        var playlistsModel = new PlaylistsModel();
         var length = 0;
         var playlistId = 0;
 
         try
         {
-            while (resultSet.next())
+            while (playlistResultSet.next())
             {
                 var playlist = new PlaylistModel();
-                playlistId = resultSet.getInt("PLAYLISTID");
+                playlistId = playlistResultSet.getInt("PLAYLISTID");
                 playlist.setId(playlistId);
-                playlist.setName(resultSet.getString("NAME"));
-                playlist.setOwner(resultSet.getBoolean("OWNER"));
+                playlist.setName(playlistResultSet.getString("NAME"));
+
+                playlist.setOwner(isOwner(playlist, token));
+
                 playlist.setTracks(new String[0]);
 
                 length += calculateLengthOfPlaylist(playlistId);
-                response.addPlaylist(playlist);
+                playlistsModel.addPlaylist(playlist);
             }
         } catch (SQLException e)
         {
             System.out.println("Error during reading resultSet: " + e);
         }
-        response.setLength(length);
-        return response;
-    }
-
-    @Override
-    public TrackResponse viewTracksInPlaylist(int playlistId, String token)
-    {
-        var response = new TrackResponse();
-        var track = new TrackModel();
-        var resultSet = trackDAO.getTracksOfPlaylist(playlistId);
-
-        try
-        {
-            while (resultSet.next())
-            {
-                track = new TrackModel();
-                track.setId(resultSet.getInt("TRACKID"));
-                track.setTitle(resultSet.getString("TITLE"));
-                track.setDuration(resultSet.getInt("DURATION"));
-                track.setPerformer(resultSet.getString("PERFORMER"));
-                track.setAlbum(resultSet.getString("ALBUM"));
-                track.setPlaycount(resultSet.getInt("PLAYCOUNT"));
-                track.setPublicationDate(resultSet.getString("PUBLICATIONDATE"));
-                track.setDescription(resultSet.getString("DESCRIPTION"));
-                response.addTracks(track);
-            }
-        } catch (SQLException e)
-        {
-            System.out.println("Error during reading resultSet: " + e);
-        }
-        return response;
+        playlistsModel.setLength(length);
+        return playlistsModel;
     }
 
     @Override
@@ -96,6 +73,19 @@ public class PlaylistServiceImpl implements PlaylistService
     }
 
     @Override
+    public void removeTrackFromPlaylist(int playlistId, int trackId)
+    {
+        playlistDAO.deleteTrackFromPlaylist(playlistId, trackId);
+    }
+
+    @Override
+    public void addTrackToPlaylist(int playlistId, TrackModel trackModel)
+    {
+        playlistDAO.addTrackToPlaylist(playlistId, trackModel);
+    }
+
+
+    @Override
     public int calculateLengthOfPlaylist(int playlistid)
     {
         var resultSet = trackDAO.getTracksOfPlaylist(playlistid);
@@ -112,5 +102,28 @@ public class PlaylistServiceImpl implements PlaylistService
         }
 
         return result;
+    }
+
+    private boolean isOwner(PlaylistModel playlist, String token)
+    {
+        var userResultSet = loginDAO.getUserByToken(token);
+
+        try
+        {
+            while (userResultSet.next())
+            {
+                if (null != userResultSet.getString("USERNAME"))
+                {
+                    return true;
+                } else
+                {
+                    return false;
+                }
+            }
+        } catch (SQLException e)
+        {
+            System.out.println("Error during reading resultSet: " + e);
+        }
+        return true;
     }
 }

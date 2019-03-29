@@ -1,28 +1,30 @@
 package school.oose.dea.controllers;
 
 import school.oose.dea.models.PlaylistModel;
+import school.oose.dea.models.TrackModel;
 import school.oose.dea.services.PlaylistService;
+import school.oose.dea.services.TrackService;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-import java.sql.SQLException;
+
+import static javax.faces.component.UIInput.isEmpty;
 
 @Path("/playlists")
 public class PlaylistController
 {
-
-    @Inject
     private PlaylistService playlistService;
+    private TrackService trackService;
 
     @GET
     @Consumes("application/json")
     @Produces("application/json")
     public Response getAllPlaylists(@QueryParam("token") String token)
     {
-        if (!LoginController.TOKEN.equals(token))
+        if (isEmpty(token))
         {
-            return Response.status(403).build();
+            return Response.status(401).build();
         }
         return Response.ok().entity(playlistService.getAllPlaylists(token)).build();
     }
@@ -33,12 +35,12 @@ public class PlaylistController
     @Produces("application/json")
     public Response viewTracksInPlaylist(@PathParam("playlistId") int playlistId, @QueryParam("token") String token)
     {
-        if (!LoginController.TOKEN.equals(token))
+        if (isEmpty(token))
         {
-            return Response.status(403).build();
+            return Response.status(401).build();
         }
 
-        return Response.ok().entity(playlistService.viewTracksInPlaylist(playlistId, token)).build();
+        return Response.ok().entity(trackService.viewTracksInPlaylist(playlistId, token)).build();
     }
 
     @PUT
@@ -47,6 +49,11 @@ public class PlaylistController
     @Produces("application/json")
     public Response editPlaylist(PlaylistModel playlist, @PathParam("playlistId") int playlistId, @QueryParam("token") String token)
     {
+        if (isEmpty(token))
+        {
+            return Response.status(401).build();
+        }
+
         playlistService.modifyPlaylist(playlistId, playlist);
 
         return getAllPlaylists(token);
@@ -57,6 +64,11 @@ public class PlaylistController
     @Produces("application/json")
     public Response addPlaylist(PlaylistModel playlist, @QueryParam("token") String token)
     {
+        if (isEmpty(token))
+        {
+            return Response.status(401).build();
+        }
+
         playlistService.addPlaylist(token, playlist);
 
         return getAllPlaylists(token);
@@ -68,10 +80,57 @@ public class PlaylistController
     @Produces("application/json")
     public Response deletePlaylist(@PathParam("playlistId") int playlistId, @QueryParam("token") String token)
     {
+        if (isEmpty(token))
+        {
+            return Response.status(401).build();
+        }
+
         playlistService.deletePlaylist(playlistId);
 
         return getAllPlaylists(token);
     }
 
+    @Path("/{playlistId}/tracks/{trackId}")
+    @DELETE
+    @Consumes("application/json")
+    @Produces("application/json")
+    public Response removeTrackFromPlaylist(@QueryParam("token") String token, @PathParam("playlistId") int playlistId, @PathParam("trackId") int trackId)
+    {
+        if (isEmpty(token))
+        {
+            return Response.status(401).build();
+        }
 
+        playlistService.removeTrackFromPlaylist(playlistId, trackId);
+
+        return viewTracksInPlaylist(playlistId, token);
+    }
+
+    @Path("/{id}/tracks")
+    @POST
+    @Consumes("application/json")
+    @Produces("application/json")
+    public Response addTrackToPlaylist(@QueryParam("token") String token, @PathParam("id") int playlistId, TrackModel trackModel)
+    {
+        if (isEmpty(token))
+        {
+            return Response.status(401).build();
+        }
+
+        playlistService.addTrackToPlaylist(playlistId, trackModel);
+
+        return viewTracksInPlaylist(playlistId, token);
+    }
+
+    @Inject
+    public void setPlaylistService(PlaylistService playlistService)
+    {
+        this.playlistService = playlistService;
+    }
+
+    @Inject
+    public void setTrackService(TrackService trackService)
+    {
+        this.trackService = trackService;
+    }
 }
