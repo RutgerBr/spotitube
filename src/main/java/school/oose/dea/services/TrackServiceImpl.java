@@ -16,24 +16,23 @@ public class TrackServiceImpl implements TrackService
     @Override
     public TracksModel getAllTracksNotInPlaylist(int playlistId)
     {
-        var model = new TracksModel();
         var resultSet = trackDAO.getTracksNotInPlaylist(playlistId);
 
-        return getTrackModel(model, resultSet);
+        return getTrackModel(resultSet);
     }
 
     @Override
     public TracksModel viewTracksInPlaylist(int playlistId, String token)
     {
-        var model = new TracksModel();
         var resultSet = trackDAO.getTracksOfPlaylist(playlistId);
 
-        return getTrackModel(model, resultSet);
+        return getTrackModel(resultSet);
     }
 
-    private TracksModel getTrackModel(TracksModel model, ResultSet resultSet)
+    private TracksModel getTrackModel(ResultSet resultSet)
     {
         TrackModel track;
+        TracksModel model = new TracksModel();
         try
         {
             while (resultSet.next())
@@ -47,6 +46,7 @@ public class TrackServiceImpl implements TrackService
                 track.setPlaycount(resultSet.getInt("PLAYCOUNT"));
                 track.setPublicationDate(resultSet.getString("PUBLICATIONDATE"));
                 track.setDescription(resultSet.getString("DESCRIPTION"));
+                track.setOfflineAvailable(resultSet.getBoolean("OFFLINEAVAILABLE"));
                 model.addTracks(track);
             }
         } catch (SQLException e)

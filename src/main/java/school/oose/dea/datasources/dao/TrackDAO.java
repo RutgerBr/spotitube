@@ -25,7 +25,7 @@ public class TrackDAO
 
         try
         {
-            PreparedStatement prep = connection.getConnection().prepareStatement("SELECT * FROM TRACK WHERE trackID IN (SELECT TRACKID FROM TRACK_IN_PLAYLIST WHERE PLAYLISTID = ?)");
+            PreparedStatement prep = connection.getConnection().prepareStatement("SELECT * FROM TRACK t INNER JOIN TRACK_IN_PLAYLIST tip ON t.TRACKID = tip.TRACKID WHERE PLAYLISTID = ?");
 
             prep.setInt(1, playlistId);
             result = prep.executeQuery();
@@ -42,7 +42,7 @@ public class TrackDAO
 
         try
         {
-            PreparedStatement prep = connection.getConnection().prepareStatement("SELECT * FROM TRACK WHERE TRACKID NOT IN (SELECT TRACKID FROM TRACK_IN_PLAYLIST WHERE PLAYLISTID = ?)");
+            PreparedStatement prep = connection.getConnection().prepareStatement("SELECT t.*, tip.OFFLINEAVAILABLE FROM TRACK t JOIN TRACK_IN_PLAYLIST tip ON t.TRACKID = tip.TRACKID WHERE t.TRACKID NOT IN (SELECT TRACKID FROM TRACK_IN_PLAYLIST WHERE PLAYLISTID = ?)");
 
             prep.setInt(1, playlistId);
             result = prep.executeQuery();

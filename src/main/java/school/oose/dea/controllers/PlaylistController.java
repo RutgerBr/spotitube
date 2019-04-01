@@ -9,7 +9,7 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
-import static javax.faces.component.UIInput.isEmpty;
+import static com.microsoft.sqlserver.jdbc.StringUtils.isEmpty;
 
 @Path("/playlists")
 public class PlaylistController
@@ -24,7 +24,7 @@ public class PlaylistController
     {
         if (isEmpty(token))
         {
-            return Response.status(401).build();
+            return Response.status(400).build();
         }
         return Response.ok().entity(playlistService.getAllPlaylists(token)).build();
     }
@@ -37,7 +37,7 @@ public class PlaylistController
     {
         if (isEmpty(token))
         {
-            return Response.status(401).build();
+            return Response.status(400).build();
         }
 
         return Response.ok().entity(trackService.viewTracksInPlaylist(playlistId, token)).build();
@@ -51,7 +51,7 @@ public class PlaylistController
     {
         if (isEmpty(token))
         {
-            return Response.status(401).build();
+            return Response.status(400).build();
         }
 
         playlistService.modifyPlaylist(playlistId, playlist);
@@ -66,7 +66,7 @@ public class PlaylistController
     {
         if (isEmpty(token))
         {
-            return Response.status(401).build();
+            return Response.status(400).build();
         }
 
         playlistService.addPlaylist(token, playlist);
@@ -82,7 +82,7 @@ public class PlaylistController
     {
         if (isEmpty(token))
         {
-            return Response.status(401).build();
+            return Response.status(400).build();
         }
 
         playlistService.deletePlaylist(playlistId);
@@ -98,7 +98,7 @@ public class PlaylistController
     {
         if (isEmpty(token))
         {
-            return Response.status(401).build();
+            return Response.status(400).build();
         }
 
         playlistService.removeTrackFromPlaylist(playlistId, trackId);
@@ -114,7 +114,7 @@ public class PlaylistController
     {
         if (isEmpty(token))
         {
-            return Response.status(401).build();
+            return Response.status(400).build();
         }
 
         playlistService.addTrackToPlaylist(playlistId, trackModel);

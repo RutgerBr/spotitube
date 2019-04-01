@@ -10,8 +10,7 @@ import java.sql.SQLException;
 
 public class LoginServiceImpl implements LoginService
 {
-    @Inject
-    private LoginDAO loginDAO = new LoginDAO();
+    private LoginDAO loginDAO;
 
     @Override
     public LoginModel verifyLogin(LoginRequest request)
@@ -38,5 +37,11 @@ public class LoginServiceImpl implements LoginService
             System.out.println("Error reading resultset");
         }
         return model;
+    }
+
+    @Inject
+    public void setLoginDAO(LoginDAO loginDAO)
+    {
+        this.loginDAO = loginDAO;
     }
 }

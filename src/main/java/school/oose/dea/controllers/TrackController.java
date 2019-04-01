@@ -7,7 +7,7 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
-import static javax.faces.component.UIInput.isEmpty;
+import static com.microsoft.sqlserver.jdbc.StringUtils.isEmpty;
 
 @Path("/tracks")
 public class TrackController
@@ -21,10 +21,8 @@ public class TrackController
     {
         if (isEmpty(token))
         {
-            return Response.status(401).build();
+            return Response.status(400).build();
         }
-        trackService.getAllTracksNotInPlaylist(playlistId);
-
         return Response.ok().entity(trackService.getAllTracksNotInPlaylist(playlistId)).build();
     }
 

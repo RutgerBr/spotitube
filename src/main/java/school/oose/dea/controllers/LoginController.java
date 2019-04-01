@@ -29,7 +29,7 @@ public class LoginController
         }
         else
         {
-            return Response.status(403).build();
+            return Response.status(401).build();
         }
     }
 

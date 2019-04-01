@@ -101,38 +101,4 @@ public class LoginDAO
         }
         return isValid;
     }
-
-//    public boolean verifyToken(String username, String token)
-//    {
-//        ResultSet result = null;
-//        boolean isValid = false;
-//        try
-//        {
-//            PreparedStatement prep = connection.getConnection().prepareStatement("SELECT * FROM [USER] WHERE USERNAME = ? AND TOKEN = ?");
-//
-//            prep.setString(1, username);
-//            prep.setString(2, token);
-//            result = prep.executeQuery();
-//
-//        } catch (SQLException e)
-//        {
-//            System.out.println("Query execution failed: " + e);
-//        }
-//
-//        try
-//        {
-//            if(result.next())
-//            {
-//                isValid = true;
-//            }
-//            else
-//            {
-//                isValid = false;
-//            }
-//        } catch (SQLException e)
-//        {
-//            e.printStackTrace();
-//        }
-//        return isValid;
-//    }
 }
