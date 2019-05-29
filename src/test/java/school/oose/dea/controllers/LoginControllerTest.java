@@ -2,7 +2,7 @@ package school.oose.dea.controllers;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import school.oose.dea.controllers.dto.LoginRequest;
+import school.oose.dea.models.LoginRequestModel;
 import school.oose.dea.models.LoginModel;
 import school.oose.dea.services.LoginService;
 
@@ -20,7 +20,7 @@ class LoginControllerTest
 
     private LoginService loginServiceMock;
     private LoginController loginController;
-    private LoginRequest request;
+    private LoginRequestModel request;
     private LoginModel loginModel;
 
     @BeforeEach
@@ -30,7 +30,7 @@ class LoginControllerTest
         loginController = new LoginController();
         loginController.setLoginService(loginServiceMock);
 
-        request = new LoginRequest();
+        request = new LoginRequestModel();
         request.setUser(USERNAME);
         request.setPassword(PASSWORD);
 
@@ -66,7 +66,7 @@ class LoginControllerTest
     }
 
     @Test
-    void testControllerDelegatesToService()
+    void testControllerDelegatesToLoginService()
     {
         //Setup
         when(loginServiceMock.verifyLogin(request)).thenReturn(loginModel);

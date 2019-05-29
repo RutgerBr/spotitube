@@ -1,6 +1,6 @@
-package school.oose.dea.controllers.dto;
+package school.oose.dea.models;
 
-public class LoginRequest
+public class LoginRequestModel
 {
     private String user;
     private String password;

@@ -1,11 +1,12 @@
 package school.oose.dea.services;
 
 import org.junit.jupiter.api.BeforeEach;
-import school.oose.dea.controllers.dto.LoginRequest;
+import org.junit.jupiter.api.Test;
+import school.oose.dea.models.LoginRequestModel;
 import school.oose.dea.datasources.dao.LoginDAO;
 import school.oose.dea.models.LoginModel;
 
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 public class LoginServiceImplTest
 {
@@ -16,7 +17,7 @@ public class LoginServiceImplTest
     private LoginServiceImpl loginServiceImpl;
     private LoginDAO loginDAOMock;
 
-    private LoginRequest request;
+    private LoginRequestModel request;
     private LoginModel loginModel;
 
     @BeforeEach
@@ -26,12 +27,25 @@ public class LoginServiceImplTest
         loginServiceImpl = new LoginServiceImpl();
         loginServiceImpl.setLoginDAO(loginDAOMock);
 
-        request = new LoginRequest();
+        request = new LoginRequestModel();
         request.setUser(USERNAME);
         request.setPassword(PASSWORD);
 
         loginModel = new LoginModel();
         loginModel.setToken(TOKEN);
         loginModel.setUser(USERNAME);
+    }
+
+    @Test
+    void testServiceProperlyUsesLoginDAO()
+    {
+        //Setup
+        when(loginDAOMock.getLoginInfo(USERNAME, PASSWORD)).thenReturn(loginModel);
+
+        //Test
+        loginServiceImpl.verifyLogin(request);
+
+        //Assert
+        verify(loginDAOMock).getLoginInfo(USERNAME, PASSWORD);
     }
 }

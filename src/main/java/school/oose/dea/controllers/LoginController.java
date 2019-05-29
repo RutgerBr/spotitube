@@ -1,6 +1,6 @@
 package school.oose.dea.controllers;
 
-import school.oose.dea.controllers.dto.LoginRequest;
+import school.oose.dea.models.LoginRequestModel;
 import school.oose.dea.models.LoginModel;
 import school.oose.dea.services.LoginService;
 
@@ -19,7 +19,7 @@ public class LoginController
     @POST
     @Consumes("application/json")
     @Produces("application/json")
-    public Response login(LoginRequest request)
+    public Response login(LoginRequestModel request)
     {
         LoginModel model = loginService.verifyLogin(request);
 

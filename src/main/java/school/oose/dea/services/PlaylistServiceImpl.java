@@ -8,50 +8,17 @@ import school.oose.dea.models.PlaylistModel;
 import school.oose.dea.models.TrackModel;
 
 import javax.inject.Inject;
-import java.sql.SQLException;
 
 public class PlaylistServiceImpl implements PlaylistService
 {
-
-    @Inject
     private LoginDAO loginDAO = new LoginDAO();
-
-    @Inject
     private PlaylistDAO playlistDAO = new PlaylistDAO();
-
-    @Inject
     private TrackDAO trackDAO = new TrackDAO();
 
     @Override
     public PlaylistsModel getAllPlaylists(String token)
     {
-        var playlistResultSet = playlistDAO.getAllPlaylistInfo(token);
-        var playlistsModel = new PlaylistsModel();
-        var length = 0;
-        var playlistId = 0;
-
-        try
-        {
-            while (playlistResultSet.next())
-            {
-                var playlist = new PlaylistModel();
-                playlistId = playlistResultSet.getInt("PLAYLISTID");
-                playlist.setId(playlistId);
-                playlist.setName(playlistResultSet.getString("NAME"));
-
-                playlist.setOwner(isOwner(playlist, token));
-
-                playlist.setTracks(new String[0]);
-
-                length += calculateLengthOfPlaylist(playlistId);
-                playlistsModel.addPlaylist(playlist);
-            }
-        } catch (SQLException e)
-        {
-            System.out.println("Error during reading resultSet: " + e);
-        }
-        playlistsModel.setLength(length);
-        return playlistsModel;
+        return playlistDAO.getAllPlaylistInfo(token);
     }
 
     @Override
@@ -84,46 +51,21 @@ public class PlaylistServiceImpl implements PlaylistService
         playlistDAO.addTrackToPlaylist(playlistId, trackModel);
     }
 
-
-    @Override
-    public int calculateLengthOfPlaylist(int playlistid)
+    @Inject
+    public void setLoginDAO(LoginDAO loginDAO)
     {
-        var resultSet = trackDAO.getTracksOfPlaylist(playlistid);
-        var result = 0;
-        try
-        {
-            while (resultSet.next())
-            {
-                result += resultSet.getInt("DURATION");
-            }
-        } catch (SQLException e)
-        {
-            System.out.println("Error during reading resultSet: " + e);
-        }
-
-        return result;
+        this.loginDAO = loginDAO;
     }
 
-    private boolean isOwner(PlaylistModel playlist, String token)
+    @Inject
+    public void setPlaylistDAO(PlaylistDAO playlistDAO)
     {
-        var userResultSet = loginDAO.getUserByToken(token);
+        this.playlistDAO = playlistDAO;
+    }
 
-        try
-        {
-            while (userResultSet.next())
-            {
-                if (null != userResultSet.getString("USERNAME"))
-                {
-                    return true;
-                } else
-                {
-                    return false;
-                }
-            }
-        } catch (SQLException e)
-        {
-            System.out.println("Error during reading resultSet: " + e);
-        }
-        return true;
+    @Inject
+    public void setTrackDAO(TrackDAO trackDAO)
+    {
+        this.trackDAO = trackDAO;
     }
 }

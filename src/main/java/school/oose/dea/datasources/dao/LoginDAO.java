@@ -1,6 +1,7 @@
 package school.oose.dea.datasources.dao;
 
 import school.oose.dea.datasources.DatabaseConnection;
+import school.oose.dea.models.LoginModel;
 
 import javax.inject.Inject;
 import java.sql.*;
@@ -17,7 +18,7 @@ public class LoginDAO
         connection.connectToDatabase();
     }
 
-    public ResultSet getLoginInfo(String user, String password)
+    public LoginModel getLoginInfo(String user, String password)
     {
         ResultSet result = null;
 
@@ -32,7 +33,26 @@ public class LoginDAO
         {
             System.out.println("Query execution failed: " + e);
         }
-        return result;
+
+        var model = new LoginModel();
+
+        try
+        {
+            if (result.next())
+            {
+                model.setUser(result.getString("USERNAME"));
+                model.setToken(result.getString("TOKEN"));
+
+            } else
+            {
+                return null;
+            }
+        } catch (
+                SQLException e)
+        {
+            System.out.println("Error reading resultset");
+        }
+        return model;
     }
 
     public ResultSet getUserByToken(String token)

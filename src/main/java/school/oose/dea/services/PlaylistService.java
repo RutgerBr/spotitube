@@ -17,6 +17,4 @@ public interface PlaylistService
     void removeTrackFromPlaylist(int playlistId, int trackId);
 
     void addTrackToPlaylist(int playlistId, TrackModel trackModel);
-
-    int calculateLengthOfPlaylist(int playlistid);
 }
