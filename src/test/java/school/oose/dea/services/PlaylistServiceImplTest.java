@@ -38,7 +38,7 @@ public class PlaylistServiceImplTest
     }
 
     @Test
-    void testServiceDelegatesToPlaylistDAO()
+    void testGetAllPlaylistProperlyDelegatesToPlaylistDAO()
     {
         //Setup
         when(playlistDAOMock.getAllPlaylistInfo(TOKEN)).thenReturn(playlistsModel);
@@ -51,14 +51,27 @@ public class PlaylistServiceImplTest
     }
 
     @Test
-    void testServiceAddsPlaylist() {
-        // Setup
+    void testModifyPlaylistProperlyDelegatesToPlaylistDAO()
+    {
+        //Setup
         doNothing().when(playlistDAOMock).modifyPlaylist(ID, playlistModel);
 
-        // Test
+        //Test
+        playlistServiceImpl.modifyPlaylist(ID, playlistModel);
+
+        //Assert
+        verify(playlistDAOMock).modifyPlaylist(ID, playlistModel);
+    }
+    @Test
+    void testAddPlaylistProperlyDelegatesToPlaylistDAO()
+    {
+        //Setup
+        doNothing().when(playlistDAOMock).addPlaylist(TOKEN, playlistModel);
+
+        //Test
         playlistServiceImpl.addPlaylist(TOKEN, playlistModel);
 
-        // Verify
+        //Assert
         verify(playlistDAOMock).addPlaylist(TOKEN, playlistModel);
     }
 }

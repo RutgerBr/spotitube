@@ -10,6 +10,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static javax.faces.component.UIInput.isEmpty;
+
 public class TrackDAO
 {
     private DatabaseConnection connection;
@@ -24,54 +26,62 @@ public class TrackDAO
     public TracksModel getTracksOfPlaylist(int playlistId)
     {
         ResultSet result = getTracksOfPlaylistResultSet(playlistId);
-
-        var trackModel = getTrackModel(result);
-        return trackModel;
-    }
-
-    public TracksModel getTracksNotInPlaylist(int playlistId)
-    {
-        ResultSet result = null;
-
+        TracksModel tracksModel = new TracksModel();
+        TrackModel trackModel;
         try
         {
-            PreparedStatement prep = connection.getConnection().prepareStatement("SELECT t.*, tip.OFFLINEAVAILABLE FROM TRACK t JOIN TRACK_IN_PLAYLIST tip ON t.TRACKID = tip.TRACKID WHERE t.TRACKID NOT IN (SELECT TRACKID FROM TRACK_IN_PLAYLIST WHERE PLAYLISTID = ?)");
-
-            prep.setInt(1, playlistId);
-            result = prep.executeQuery();
+            while (result.next())
+            {
+                trackModel = getTrackModel(result);
+                trackModel.setOfflineAvailable(result.getBoolean("OFFLINEAVAILABLE"));
+                tracksModel.addTracks(trackModel);
+            }
         } catch (SQLException e)
         {
             System.out.println("Query execution failed: " + e);
         }
-        var trackModel = getTrackModel(result);
-        return trackModel;
+
+        return tracksModel;
     }
 
-    private TracksModel getTrackModel(ResultSet resultSet)
+    public TracksModel getTracksNotInPlaylist(int playlistId)
     {
-        TrackModel track;
-        TracksModel model = new TracksModel();
+        ResultSet result;
+        TracksModel tracksModel = new TracksModel();
+
         try
         {
-            while (resultSet.next())
+            PreparedStatement prep = connection.getConnection().prepareStatement("SELECT DISTINCT t.* FROM TRACK t LEFT OUTER JOIN TRACK_IN_PLAYLIST tip ON t.TRACKID = tip.TRACKID WHERE t.TRACKID NOT IN (SELECT TRACKID FROM TRACK_IN_PLAYLIST WHERE PLAYLISTID = ?)");
+
+            prep.setInt(1, playlistId);
+            result = prep.executeQuery();
+
+            while (result.next())
             {
-                track = new TrackModel();
-                track.setId(resultSet.getInt("TRACKID"));
-                track.setTitle(resultSet.getString("TITLE"));
-                track.setDuration(resultSet.getInt("DURATION"));
-                track.setPerformer(resultSet.getString("PERFORMER"));
-                track.setAlbum(resultSet.getString("ALBUM"));
-                track.setPlaycount(resultSet.getInt("PLAYCOUNT"));
-                track.setPublicationDate(resultSet.getString("PUBLICATIONDATE"));
-                track.setDescription(resultSet.getString("DESCRIPTION"));
-                track.setOfflineAvailable(resultSet.getBoolean("OFFLINEAVAILABLE"));
-                model.addTracks(track);
+                tracksModel.addTracks(getTrackModel(result));
             }
         } catch (SQLException e)
         {
-            System.out.println("Error during reading resultSet: " + e);
+            System.out.println("Query execution failed: " + e);
         }
-        return model;
+        return tracksModel;
+    }
+
+    private TrackModel getTrackModel(ResultSet resultSet) throws SQLException
+    {
+        TrackModel track;
+
+        track = new TrackModel();
+        track.setId(resultSet.getInt("TRACKID"));
+        track.setTitle(resultSet.getString("TITLE"));
+        track.setDuration(resultSet.getInt("DURATION"));
+        track.setPerformer(resultSet.getString("PERFORMER"));
+        track.setAlbum(resultSet.getString("ALBUM"));
+        track.setPlaycount(resultSet.getInt("PLAYCOUNT"));
+        track.setPublicationDate(resultSet.getString("PUBLICATIONDATE"));
+        track.setDescription(resultSet.getString("DESCRIPTION"));
+
+        return track;
     }
 
     public ResultSet getTracksOfPlaylistResultSet(int playlistId)
@@ -80,7 +90,7 @@ public class TrackDAO
 
         try
         {
-            PreparedStatement prep = connection.getConnection().prepareStatement("SELECT * FROM TRACK t INNER JOIN TRACK_IN_PLAYLIST tip ON t.TRACKID = tip.TRACKID WHERE PLAYLISTID = ?");
+            PreparedStatement prep = connection.getConnection().prepareStatement("SELECT DISTINCT * FROM TRACK t INNER JOIN TRACK_IN_PLAYLIST tip ON t.TRACKID = tip.TRACKID WHERE PLAYLISTID = ?");
 
             prep.setInt(1, playlistId);
             result = prep.executeQuery();
