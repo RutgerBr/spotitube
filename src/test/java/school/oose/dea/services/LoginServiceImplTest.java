@@ -37,7 +37,7 @@ public class LoginServiceImplTest
     }
 
     @Test
-    void testServiceProperlyUsesLoginDAO()
+    void testVerifyLoginProperlyUsesLoginDAO()
     {
         //Setup
         when(loginDAOMock.getLoginInfo(USERNAME, PASSWORD)).thenReturn(loginModel);

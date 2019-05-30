@@ -1,9 +1,8 @@
 package school.oose.dea.services;
 
 import school.oose.dea.models.PlaylistsModel;
-import school.oose.dea.datasources.dao.LoginDAO;
+
 import school.oose.dea.datasources.dao.PlaylistDAO;
-import school.oose.dea.datasources.dao.TrackDAO;
 import school.oose.dea.models.PlaylistModel;
 import school.oose.dea.models.TrackModel;
 
@@ -11,9 +10,7 @@ import javax.inject.Inject;
 
 public class PlaylistServiceImpl implements PlaylistService
 {
-    private LoginDAO loginDAO = new LoginDAO();
     private PlaylistDAO playlistDAO = new PlaylistDAO();
-    private TrackDAO trackDAO = new TrackDAO();
 
     @Override
     public PlaylistsModel getAllPlaylists(String token)
@@ -52,20 +49,8 @@ public class PlaylistServiceImpl implements PlaylistService
     }
 
     @Inject
-    public void setLoginDAO(LoginDAO loginDAO)
-    {
-        this.loginDAO = loginDAO;
-    }
-
-    @Inject
     public void setPlaylistDAO(PlaylistDAO playlistDAO)
     {
         this.playlistDAO = playlistDAO;
-    }
-
-    @Inject
-    public void setTrackDAO(TrackDAO trackDAO)
-    {
-        this.trackDAO = trackDAO;
     }
 }

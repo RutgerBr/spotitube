@@ -5,12 +5,9 @@ import school.oose.dea.models.TrackModel;
 import school.oose.dea.models.TracksModel;
 
 import javax.inject.Inject;
-import javax.xml.transform.Result;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import static javax.faces.component.UIInput.isEmpty;
 
 public class TrackDAO
 {

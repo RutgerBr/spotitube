@@ -7,13 +7,11 @@ import javax.inject.Inject;
 
 public class TrackServiceImpl implements TrackService
 {
-    @Inject
     private TrackDAO trackDAO = new TrackDAO();
 
     @Override
     public TracksModel getAllTracksNotInPlaylist(int playlistId)
     {
-
         return trackDAO.getTracksNotInPlaylist(playlistId);
     }
 
@@ -22,5 +20,11 @@ public class TrackServiceImpl implements TrackService
     {
 
         return trackDAO.getTracksOfPlaylist(playlistId);
+    }
+
+    @Inject
+    public void setTrackDAO(TrackDAO trackDAO)
+    {
+        this.trackDAO = trackDAO;
     }
 }
