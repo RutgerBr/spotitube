@@ -2,21 +2,21 @@ package school.oose.dea.controllers;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import school.oose.dea.models.LoginRequestModel;
 import school.oose.dea.models.LoginModel;
+import school.oose.dea.models.LoginRequestModel;
 import school.oose.dea.services.LoginService;
 
 import javax.ws.rs.core.Response;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.mock;
 
 class LoginControllerTest
 {
     private static final String USERNAME = "Rutger";
     private static final String PASSWORD = "asdf";
-    private static final String TOKEN = "asdf";
+    private static final String TOKEN = "1f888836-1e49-4e3a-8c5b-c827c0efdbc0";
 
     private LoginService loginServiceMock;
     private LoginController loginController;
@@ -49,20 +49,21 @@ class LoginControllerTest
         Response response = loginController.login(request);
 
         //Assert
-       assertEquals(200, response.getStatus());
+        assertEquals(200, response.getStatus());
     }
 
     @Test
     void testIncorrectLoginStatusUnauthorized()
     {
         //Setup
+        String loginExceptionMessage = "Wrong username or password";
         when(loginServiceMock.verifyLogin(request)).thenReturn(null);
 
         //Test
-        Response response = loginController.login(request);
-
+        LoginException loginException = assertThrows(LoginException.class, () ->
+                loginController.login(request));
         //Assert
-        assertEquals(401, response.getStatus());
+        assertEquals(loginExceptionMessage, loginException.getMessage());
     }
 
     @Test

@@ -4,7 +4,6 @@ import school.oose.dea.datasources.DatabaseConnection;
 import school.oose.dea.models.TrackModel;
 import school.oose.dea.models.TracksModel;
 
-import javax.inject.Inject;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,7 +12,6 @@ public class TrackDAO
 {
     private DatabaseConnection connection;
 
-    @Inject
     public TrackDAO()
     {
         connection = new DatabaseConnection();
@@ -35,7 +33,7 @@ public class TrackDAO
             }
         } catch (SQLException e)
         {
-            System.out.println("Query execution failed: " + e);
+            throw new PersistenceException(e.getMessage());
         }
 
         return tracksModel;
@@ -93,7 +91,7 @@ public class TrackDAO
             result = prep.executeQuery();
         } catch (SQLException e)
         {
-            System.out.println("Query execution failed: " + e);
+            throw new PersistenceException(e.getMessage());
         }
         return result;
     }

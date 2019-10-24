@@ -1,7 +1,7 @@
 package school.oose.dea.controllers;
 
-import school.oose.dea.models.LoginRequestModel;
 import school.oose.dea.models.LoginModel;
+import school.oose.dea.models.LoginRequestModel;
 import school.oose.dea.services.LoginService;
 
 import javax.inject.Inject;
@@ -29,7 +29,7 @@ public class LoginController
         }
         else
         {
-            return Response.status(401).build();
+            throw new LoginException("Wrong username or password");
         }
     }
 

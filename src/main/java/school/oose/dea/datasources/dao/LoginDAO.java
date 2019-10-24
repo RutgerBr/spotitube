@@ -3,15 +3,16 @@ package school.oose.dea.datasources.dao;
 import school.oose.dea.datasources.DatabaseConnection;
 import school.oose.dea.models.LoginModel;
 
-import javax.inject.Inject;
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.UUID;
 
 public class LoginDAO
 {
     private DatabaseConnection connection;
 
-    @Inject
+
     public LoginDAO()
     {
         connection = new DatabaseConnection();
@@ -31,7 +32,7 @@ public class LoginDAO
             result = prep.executeQuery();
         } catch (SQLException e)
         {
-            System.out.println("Query execution failed: " + e);
+            throw new PersistenceException(e.getMessage());
         }
 
         var model = new LoginModel();
@@ -50,7 +51,7 @@ public class LoginDAO
         } catch (
                 SQLException e)
         {
-            System.out.println("Error reading resultset");
+            throw new PersistenceException(e.getMessage());
         }
         return model;
     }
@@ -67,7 +68,7 @@ public class LoginDAO
             result = prep.executeQuery();
         } catch (SQLException e)
         {
-            System.out.println("Query execution failed: " + e);
+            throw new PersistenceException(e.getMessage());
         }
 
         return result;
@@ -92,7 +93,7 @@ public class LoginDAO
 
         } catch (SQLException e)
         {
-            System.out.println("Query execution failed: " + e);
+            throw new PersistenceException(e.getMessage());
         }
     }
 
@@ -109,7 +110,7 @@ public class LoginDAO
 
         } catch (SQLException e)
         {
-            System.out.println("Query execution failed: " + e);
+            throw new PersistenceException(e.getMessage());
         }
 
         try
@@ -117,7 +118,7 @@ public class LoginDAO
             isValid = result.next();
         } catch (SQLException e)
         {
-            e.printStackTrace();
+            throw new PersistenceException(e.getMessage());
         }
         return isValid;
     }

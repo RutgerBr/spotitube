@@ -5,14 +5,14 @@ import school.oose.dea.models.PlaylistModel;
 import school.oose.dea.models.PlaylistsModel;
 import school.oose.dea.models.TrackModel;
 
-import javax.inject.Inject;
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class PlaylistDAO
 {
     private DatabaseConnection connection;
 
-    @Inject
     public PlaylistDAO()
     {
         connection = new DatabaseConnection();
@@ -32,7 +32,7 @@ public class PlaylistDAO
 
         } catch (SQLException e)
         {
-            System.out.println("Query execution failed: " + e);
+            throw new PersistenceException(e.getMessage());
         }
 
         var playlistsModel = new PlaylistsModel();
@@ -56,7 +56,7 @@ public class PlaylistDAO
             }
         } catch (SQLException e)
         {
-            System.out.println("Error during reading resultSet: " + e);
+            throw new PersistenceException(e.getMessage());
         }
         playlistsModel.setLength(length);
 
@@ -75,7 +75,7 @@ public class PlaylistDAO
 
         } catch (SQLException e)
         {
-            System.out.println("Query execution failed: " + e);
+            throw new PersistenceException(e.getMessage());
         }
     }
 
@@ -92,7 +92,7 @@ public class PlaylistDAO
 
         } catch (SQLException e)
         {
-            System.out.println("Query execution failed: " + e);
+            throw new PersistenceException(e.getMessage());
         }
     }
 
@@ -106,7 +106,7 @@ public class PlaylistDAO
             prep.execute();
         } catch (SQLException e)
         {
-            System.out.println("Query execution failed: " + e);
+            throw new PersistenceException(e.getMessage());
         }
     }
 
@@ -123,7 +123,7 @@ public class PlaylistDAO
 
         } catch (SQLException e)
         {
-            System.out.println("Query execution failed: " + e);
+            throw new PersistenceException(e.getMessage());
         }
     }
 
@@ -142,7 +142,7 @@ public class PlaylistDAO
 
             } catch (SQLException e)
             {
-                System.out.println("Query execution failed: " + e);
+                throw new PersistenceException(e.getMessage());
             }
         }
     }
@@ -154,24 +154,18 @@ public class PlaylistDAO
 
         try
         {
-            while (userResultSet.next())
+            if (userResultSet.next())
             {
-                if (null != userResultSet.getString("USERNAME"))
-                {
-                    return true;
-                } else
-                {
-                    return false;
-                }
+                return (null != userResultSet.getString("USERNAME"));
             }
         } catch (SQLException e)
         {
-            System.out.println("Error during reading resultSet: " + e);
+            throw new PersistenceException(e.getMessage());
         }
         return true;
     }
 
-    public int calculateLengthOfPlaylist(int playlistid)
+    private int calculateLengthOfPlaylist(int playlistid)
     {
         TrackDAO trackDAO = new TrackDAO();
         var resultSet = trackDAO.getTracksOfPlaylistResultSet(playlistid);
@@ -184,7 +178,7 @@ public class PlaylistDAO
             }
         } catch (SQLException e)
         {
-            System.out.println("Error during reading resultSet: " + e);
+            throw new PersistenceException(e.getMessage());
         }
 
         return result;

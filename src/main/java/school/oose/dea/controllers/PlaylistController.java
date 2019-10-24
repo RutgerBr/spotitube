@@ -3,6 +3,7 @@ package school.oose.dea.controllers;
 import school.oose.dea.models.PlaylistModel;
 import school.oose.dea.models.TrackModel;
 import school.oose.dea.services.PlaylistService;
+import school.oose.dea.services.TokenService;
 import school.oose.dea.services.TrackService;
 
 import javax.inject.Inject;
@@ -16,6 +17,7 @@ public class PlaylistController
 {
     private PlaylistService playlistService;
     private TrackService trackService;
+    private TokenService tokenService;
 
     @GET
     @Consumes("application/json")
@@ -24,7 +26,11 @@ public class PlaylistController
     {
         if (isEmpty(token))
         {
-            return Response.status(400).build();
+            throw new BadRequestException("Provided token is empty");
+        }
+        else if (!tokenService.isTokenValid(token))
+        {
+            throw new ForbiddenException("Provided token is invalid");
         }
         return Response.ok().entity(playlistService.getAllPlaylists(token)).build();
     }
@@ -37,9 +43,12 @@ public class PlaylistController
     {
         if (isEmpty(token))
         {
-            return Response.status(400).build();
+            throw new BadRequestException("Provided token is empty");
         }
-
+        else if (!tokenService.isTokenValid(token))
+        {
+            throw new ForbiddenException("Provided token is invalid");
+        }
         return Response.ok().entity(trackService.viewTracksInPlaylist(playlistId, token)).build();
     }
 
@@ -51,9 +60,12 @@ public class PlaylistController
     {
         if (isEmpty(token))
         {
-            return Response.status(400).build();
+            throw new BadRequestException("Provided token is empty");
         }
-
+        else if (!tokenService.isTokenValid(token))
+        {
+            throw new ForbiddenException("Provided token is invalid");
+        }
         playlistService.modifyPlaylist(playlistId, playlist);
 
         return getAllPlaylists(token);
@@ -66,9 +78,12 @@ public class PlaylistController
     {
         if (isEmpty(token))
         {
-            return Response.status(400).build();
+            throw new BadRequestException("Provided token is empty");
         }
-
+        else if (!tokenService.isTokenValid(token))
+        {
+            throw new ForbiddenException("Provided token is invalid");
+        }
         playlistService.addPlaylist(token, playlist);
 
         return getAllPlaylists(token);
@@ -82,9 +97,12 @@ public class PlaylistController
     {
         if (isEmpty(token))
         {
-            return Response.status(400).build();
+            throw new BadRequestException("Provided token is empty");
         }
-
+        else if (!tokenService.isTokenValid(token))
+        {
+            throw new ForbiddenException("Provided token is invalid");
+        }
         playlistService.deletePlaylist(playlistId);
 
         return getAllPlaylists(token);
@@ -98,9 +116,12 @@ public class PlaylistController
     {
         if (isEmpty(token))
         {
-            return Response.status(400).build();
+            throw new BadRequestException("Provided token is empty");
         }
-
+        else if (!tokenService.isTokenValid(token))
+        {
+            throw new ForbiddenException("Provided token is invalid");
+        }
         playlistService.removeTrackFromPlaylist(playlistId, trackId);
 
         return viewTracksInPlaylist(playlistId, token);
@@ -114,9 +135,12 @@ public class PlaylistController
     {
         if (isEmpty(token))
         {
-            return Response.status(400).build();
+            throw new BadRequestException("Provided token is empty");
         }
-
+        else if (!tokenService.isTokenValid(token))
+        {
+            throw new ForbiddenException("Provided token is invalid");
+        }
         playlistService.addTrackToPlaylist(playlistId, trackModel);
 
         return viewTracksInPlaylist(playlistId, token);
@@ -133,4 +157,7 @@ public class PlaylistController
     {
         this.trackService = trackService;
     }
+
+    @Inject
+    public void setTokenService(TokenService tokenService) {this.tokenService = tokenService;}
 }
